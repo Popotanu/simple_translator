@@ -6,6 +6,9 @@ GEM
     ast (2.4.2)
     byebug (11.1.3)
     coderay (1.1.3)
+    connection_pool (2.2.3)
+    domain_name (0.5.20190701)
+      unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.6)
     faraday (1.3.0)
       faraday-net_http (~> 1.0)
@@ -55,15 +58,37 @@ GEM
     grpc (1.36.0-universal-darwin)
       google-protobuf (~> 3.14)
       googleapis-common-protos-types (~> 1.0)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
     jwt (2.2.2)
+    mechanize (2.7.7)
+      domain_name (~> 0.5, >= 0.5.1)
+      http-cookie (~> 1.0)
+      mime-types (>= 1.17.2)
+      net-http-digest_auth (~> 1.1, >= 1.1.1)
+      net-http-persistent (>= 2.5.2)
+      nokogiri (~> 1.6)
+      ntlm-http (~> 0.1, >= 0.1.1)
+      webrick (~> 1.7)
+      webrobots (>= 0.0.9, < 0.2)
     memoist (0.16.2)
     method_source (1.0.0)
+    mime-types (3.3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2021.0225)
     multi_json (1.15.0)
     multipart-post (2.1.1)
+    net-http-digest_auth (1.4.1)
+    net-http-persistent (4.0.1)
+      connection_pool (~> 2.2)
+    nokogiri (1.11.1-x86_64-darwin)
+      racc (~> 1.4)
+    ntlm-http (0.1.1)
     os (1.1.1)
     parallel (1.20.1)
     parser (3.0.0.0)
       ast (~> 2.4.1)
+    power_assert (2.0.0)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -71,6 +96,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.6)
+    racc (1.5.2)
     rainbow (3.0.0)
     rake (13.0.3)
     regexp_parser (2.1.1)
@@ -101,7 +127,14 @@ GEM
       rubocop-performance (= 1.10.1)
     standardrb (1.0.0)
       standard
+    test-unit (3.4.0)
+      power_assert
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.7)
     unicode-display_width (2.0.0)
+    webrick (1.7.0)
+    webrobots (0.1.2)
 
 PLATFORMS
   x86_64-darwin-19
@@ -109,9 +142,11 @@ PLATFORMS
 DEPENDENCIES
   dotenv
   google-cloud-translate (~> 3.0)
+  mechanize
   pry-byebug (~> 3.9)
   rake (~> 13.0)
   standardrb (~> 1.0)
+  test-unit (~> 3.4)
 
 BUNDLED WITH
    2.2.11

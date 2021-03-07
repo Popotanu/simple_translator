@@ -10,3 +10,7 @@ gem "pry-byebug", "~> 3.9"
 gem "dotenv"
 
 gem "rake", "~> 13.0"
+
+gem 'mechanize'
+
+gem "test-unit", "~> 3.4"
