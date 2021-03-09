@@ -1,9 +1,9 @@
 task :lint do
-  sh "bundle exec standardrb ./src/*.rb"
+  sh "buedle exec standardrb ./src/**/*.rb ./tests/**/*.rb"
 end
 
 task :lint_fix do
-  sh "bundle exec standardrb --fix ./src/*.rb"
+  sh "bundle exec standardrb --fix ./src/**/*.rb ./tests/**/*.rb"
 end
 
 task :test do
