@@ -5,8 +5,8 @@ module Scraper
   class TestResult < Test::Unit::TestCase
     def setup
       @testing = true
-      now = Date.parse('2020-01-02')
 
+      now = '2020-01-02'
       num = 2
       @me = Scraper::Result.new(num: num,published_date: now, title: 'tanu' )
 
@@ -33,6 +33,17 @@ module Scraper
 
       assert_equal true, @me == @me
       assert_equal false, @me == @similar
+    end
+
+    def test_to_h
+      attributes =  {
+        num: 1, subject: 'poti',body: 'tanutanu', uri: URI( 'https://tanu.example.com' ), 
+        category: 'animal',published_date: nil,
+        images: ['https://tanutanu.example.com'] 
+      }
+
+      result= Scraper::Result.new(attributes)
+      assert_equal attributes, result.to_h
     end
   end
 end

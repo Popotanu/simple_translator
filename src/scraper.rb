@@ -79,11 +79,14 @@ module Scraper
     attr_reader :num, :subject, :uri, :category, :body, :images, :published_date
 
     def initialize(article = {})
+      published_date = article[:date] || article[:published_date]
+      pp published_date
+      
       @num = article[:num]
       @subject = article[:subject]
-      @published_date = Date.parse(article[:date]).to_s
+      @published_date = published_date && Date.parse(published_date)
       @body = article[:body]
-      @uri = URI(article[:uri])
+      @uri = article[:uri] && URI(article[:uri])
       @category = article[:category]
       @images = article[:images]
     end
@@ -102,6 +105,21 @@ module Scraper
       @subject == other.subject &&
         @published_date == other.published_date &&
         @uri == other.uri
+    end
+
+    def to_h
+      [
+        :num,
+        :subject,
+        :uri,
+        :category,
+        :body,
+        :images,
+        :published_date
+      ].each_with_object({}) do |attr, hash| 
+        hash[attr] = instance_variable_get("@#{attr}")
+      end
+
     end
 
     def fill_in_detail(body: nil, images: [])

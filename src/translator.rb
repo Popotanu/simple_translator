@@ -5,7 +5,6 @@ Bundler.setup(:default)
 require "dotenv/load"
 require "pry-byebug"
 require "google/cloud/translate"
-require "singleton"
 
 class Translator
   def initialize(client, contents)
@@ -19,8 +18,6 @@ class Translator
 end
 
 class Client
-  include Singleton
-
   def initialize
     @service = Google::Cloud::Translate.translation_service
     @project_name = ENV["PROJECT_NAME"]
@@ -49,13 +46,13 @@ end
 
 ORIGINAL_TEXT_PATH = "./contents.txt"
 
-original_text = [
-  FileTest.exist?(ORIGINAL_TEXT_PATH) ? File.read(ORIGINAL_TEXT_PATH) : "hello tanutnau"
-]
-
-translator = Translator.new(Client.instance, original_text)
-
-response = translator.translate_text
-translated_text = response.translations.first.translated_text
-
-translated_text.split("。").each { puts "#{_1.strip}。"}
+# original_text = [
+#   FileTest.exist?(ORIGINAL_TEXT_PATH) ? File.read(ORIGINAL_TEXT_PATH) : "hello tanutnau"
+# ]
+#
+# translator = Translator.new(Client.new, original_text)
+#
+# response = translator.translate_text
+# translated_text = response.translations.first.translated_text
+#
+# translated_text.split("。").each { puts "#{_1.strip}。"}
