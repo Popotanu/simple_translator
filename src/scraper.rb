@@ -7,23 +7,22 @@ require "pry-byebug"
 
 module Scraper
   class KRoOfficial
-    BASE_PATH = URI("https://ro.gnjoy.com")
-    LIST_PATH = URI("news/devnote/list.asp")
+    BASE_PATH = "https://ro.gnjoy.com/news/devnote/"
+    LIST_PATH = "list.asp"
     LIST_URI = BASE_PATH + LIST_PATH
 
     def initialize
       @results = []
       @scraper = prepare_scraper
-      @landing_uri = LIST_URI
-      @post_uris = ["https://ro.gnjoy.com/news/devnote/View.asp?category=1&seq=4096364&curpage=1"].map{ URI(_1) }
+      @landing_uri = URI(LIST_URI)
     end
 
     def scrape
       scrape_list
-      scrape_atricle
+      scrape_article
     end
 
-    # private
+    private
 
     def prepare_scraper
       Mechanize.new { |agent|
@@ -38,7 +37,7 @@ module Scraper
         posts.each do |post|
           result = {}
           detail_path = post.search("a").attribute("href").content
-          result[:uri] = BASE_PATH + URI(detail_path)
+          result[:uri] = URI(BASE_PATH + detail_path)
 
           post.elements.each_with_object(result) do |e, res|
             res[e.values.first.to_sym] = e.content.strip
@@ -47,43 +46,44 @@ module Scraper
           @results << Scraper::Result.new(result)
         end
       end
+
       @results
     end
 
     def scrape_article
-      post_page = @post_uris.first
+      @results = @results[0..2]
+      @results.each do |result|
+        p result.uri
+        @scraper.get(result.uri.to_s) do |page|
+          article = page.search("article .forPost")
+          detail = {}
+          p article.inner_text
+          detail[:body] = article.inner_text
+          detail[:images] = article.search("img").map do
+            _1.attributes["src"].value
+          end
 
-      post = {}
-
-      @scraper.get(post_page) do |page|
-        published_date = page.search(".postDate").text.scan(/\d{4}\.\d{2}\.\d{2}/).first
-        post[:published_date] = Date.parse(published_date).to_s
-
-        h1 = page.search("h1")
-        post[:category] = h1.search(".iconDev").text
-
-        article = page.search("article .forPost")
-        post[:body] = article.inner_text
-        post[:images] = article.search("img").map do
-          _1.attributes["src"].value
+          result.fill_in_detail(**detail)
         end
+
+        sleep 2
       end
 
-      @results << Scraper::Result.new(post)
+      @results
     end
   end
 
   class Result
     include Comparable
 
-    attr_reader :num, :title, :uri, :category, :body, :images, :published_date
+    attr_reader :num, :subject, :uri, :category, :body, :images, :published_date
 
     def initialize(article = {})
       @num = article[:num]
-      @title = article[:title]
-      @published_date = article[:published_date]
+      @subject = article[:subject]
+      @published_date = Date.parse(article[:date]).to_s
       @body = article[:body]
-      @uri = article[:uri]
+      @uri = URI(article[:uri])
       @category = article[:category]
       @images = article[:images]
     end
@@ -99,15 +99,19 @@ module Scraper
     end
 
     def ==(other)
-      @title == other.title &&
+      @subject == other.subject &&
         @published_date == other.published_date &&
         @uri == other.uri
+    end
+
+    def fill_in_detail(body: nil, images: [])
+      @body = body
+      @images = images
     end
   end
 end
 
 # to avoid executing real-scraping while running tests.
 unless @testing
-  pp Scraper::KRoOfficial.new.scrape_article if false
-  pp Scraper::KRoOfficial.new.scrape_list if false
+  pp Scraper::KRoOfficial.new.scrape
 end
